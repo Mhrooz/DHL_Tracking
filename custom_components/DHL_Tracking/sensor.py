@@ -23,6 +23,14 @@ ENTITY_DESCRIPTIONS = (
     ),
 )
 
+DHL_ESTIMATE_TIME_ENTITY_DESCRIPTIONS = (
+    SensorEntityDescription(
+        key="dhl_estimate_time",
+        name="Package Arrival Time",
+        icon="mdi:timer",
+    ),
+)
+
 
 async def async_setup_entry(
     hass: HomeAssistant,  # noqa: ARG001 Unused function argument: `hass`
@@ -32,6 +40,13 @@ async def async_setup_entry(
     """Set up the sensor platform."""
     async_add_entities(
         IntegrationBlueprintSensor(
+            coordinator=entry.runtime_data.coordinator,
+            entity_description=entity_description,
+        )
+        for entity_description in ENTITY_DESCRIPTIONS
+    )
+    async_add_entities(
+        DhlEstimateTimeSensor(
             coordinator=entry.runtime_data.coordinator,
             entity_description=entity_description,
         )
@@ -55,3 +70,22 @@ class IntegrationBlueprintSensor(IntegrationBlueprintEntity, SensorEntity):
     def native_value(self) -> str | None:
         """Return the native value of the sensor."""
         return self.coordinator.data.get("body")
+
+
+class DhlEstimateTimeSensor(IntegrationBlueprintEntity, SensorEntity):
+    """dhl_tracking Sensor class."""
+
+    def __init__(
+        self,
+        coordinator: BlueprintDataUpdateCoordinator,
+        entity_description: SensorEntityDescription,
+    ) -> None:
+        """Initialize the sensor class."""
+        super().__init__(coordinator)
+        self.entity_description = entity_description
+        self.unique_id = "914JDWXMAI0Z5GANQM"
+
+    @property
+    def native_value(self) -> str | None:
+        """Return the native value of the sensor."""
+        return self.coordinator.data.get("title")

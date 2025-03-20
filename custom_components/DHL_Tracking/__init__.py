@@ -15,7 +15,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.loader import async_get_loaded_integration
 
 from .api import IntegrationBlueprintApiClient
-from .const import DOMAIN, LOGGER
+from .const import CONF_TRACKING_NUMBER, DOMAIN, LOGGER
 from .coordinator import BlueprintDataUpdateCoordinator
 from .data import IntegrationBlueprintData
 
@@ -46,6 +46,7 @@ async def async_setup_entry(
     entry.runtime_data = IntegrationBlueprintData(
         client=IntegrationBlueprintApiClient(
             _api_token=entry.data[CONF_API_TOKEN],
+            _tracking_number=entry.data[CONF_TRACKING_NUMBER],
             session=async_get_clientsession(hass),
         ),
         integration=async_get_loaded_integration(hass, entry.domain),

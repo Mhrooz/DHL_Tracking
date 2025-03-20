@@ -41,10 +41,12 @@ class IntegrationBlueprintApiClient:
     def __init__(
         self,
         _api_token: str,
+        _tracking_number: str,
         session: aiohttp.ClientSession,
     ) -> None:
         """Sample API Client."""
         self._api_token = _api_token
+        self._tracking_number = _tracking_number
         self._session = session
 
     async def async_get_data(self) -> Any:

@@ -15,7 +15,7 @@ from .api import (
     IntegrationBlueprintApiClientCommunicationError,
     IntegrationBlueprintApiClientError,
 )
-from .const import DOMAIN, LOGGER
+from .const import CONF_TRACKING_NUMBER, DOMAIN, LOGGER
 
 
 class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -33,6 +33,7 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             try:
                 await self._test_credentials(
                     _api_token=user_input[CONF_API_TOKEN],
+                    _tracking_number=user_input[CONF_TRACKING_NUMBER],
                 )
             except IntegrationBlueprintApiClientAuthenticationError as exception:
                 LOGGER.warning(exception)
@@ -67,17 +68,27 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                         selector.TextSelectorConfig(
                             type=selector.TextSelectorType.TEXT,
                         ),
-                    )
+                    ),
+                    vol.Required(
+                        CONF_TRACKING_NUMBER,
+                        default=(user_input or {}).get(
+                            CONF_TRACKING_NUMBER, vol.UNDEFINED
+                        ),
+                    ): selector.TextSelector(
+                        selector.TextSelectorConfig(
+                            type=selector.TextSelectorType.TEXT,
+                        ),
+                    ),
                 },
             ),
             errors=_errors,
         )
 
-    # async def _test_credentials(self, username: str, password: str) -> None:
-    async def _test_credentials(self, _api_token: str) -> None:
+    async def _test_credentials(self, _api_token: str, _tracking_number: str) -> None:
         """Validate credentials."""
         client = IntegrationBlueprintApiClient(
             _api_token=_api_token,
+            _tracking_number=_tracking_number,
             session=async_create_clientsession(self.hass),
         )
         await client.async_get_data()
