@@ -8,6 +8,8 @@ from homeassistant.components.sensor import SensorEntity, SensorEntityDescriptio
 
 from .entity import IntegrationBlueprintEntity
 
+from .dhl.model import DhlInfo
+
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -50,7 +52,7 @@ async def async_setup_entry(
             coordinator=entry.runtime_data.coordinator,
             entity_description=entity_description,
         )
-        for entity_description in ENTITY_DESCRIPTIONS
+        for entity_description in DHL_ESTIMATE_TIME_ENTITY_DESCRIPTIONS
     )
 
 
@@ -69,7 +71,7 @@ class IntegrationBlueprintSensor(IntegrationBlueprintEntity, SensorEntity):
     @property
     def native_value(self) -> str | None:
         """Return the native value of the sensor."""
-        return self.coordinator.data.get("body")
+        return self.coordinator.data.get_product_name()
 
 
 class DhlEstimateTimeSensor(IntegrationBlueprintEntity, SensorEntity):
@@ -83,9 +85,12 @@ class DhlEstimateTimeSensor(IntegrationBlueprintEntity, SensorEntity):
         """Initialize the sensor class."""
         super().__init__(coordinator)
         self.entity_description = entity_description
+        # TODO: Set unique_id to the tracking number
         self.unique_id = "914JDWXMAI0Z5GANQM"
 
     @property
     def native_value(self) -> str | None:
         """Return the native value of the sensor."""
-        return self.coordinator.data.get("title")
+        # return self.coordinator.data.get("title")
+        dhl_info = self.coordinator.data
+        return dhl_info.get_estimated_time_of_delivery()

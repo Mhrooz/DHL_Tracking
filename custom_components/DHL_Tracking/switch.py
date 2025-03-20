@@ -30,13 +30,13 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the switch platform."""
-    async_add_entities(
-        IntegrationBlueprintSwitch(
-            coordinator=entry.runtime_data.coordinator,
-            entity_description=entity_description,
-        )
-        for entity_description in ENTITY_DESCRIPTIONS
-    )
+    # async_add_entities(
+    #     IntegrationBlueprintSwitch(
+    #         coordinator=entry.runtime_data.coordinator,
+    #         entity_description=entity_description,
+    #     )
+    #     for entity_description in ENTITY_DESCRIPTIONS
+    # )
 
 
 class IntegrationBlueprintSwitch(IntegrationBlueprintEntity, SwitchEntity):
