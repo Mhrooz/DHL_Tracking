@@ -9,17 +9,17 @@ if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
     from homeassistant.loader import Integration
 
-    from .api import IntegrationBlueprintApiClient
+    from .api import DhlTrackingApiClient
     from .coordinator import BlueprintDataUpdateCoordinator
 
 
-type IntegrationBlueprintConfigEntry = ConfigEntry[IntegrationBlueprintData]
+type DhlTrackingConfigEntry = ConfigEntry[DhlTrackingData]
 
 
 @dataclass
-class IntegrationBlueprintData:
+class DhlTrackingData:
     """Data for the Blueprint integration."""
 
-    client: IntegrationBlueprintApiClient
+    client: DhlTrackingApiClient
     coordinator: BlueprintDataUpdateCoordinator
     integration: Integration

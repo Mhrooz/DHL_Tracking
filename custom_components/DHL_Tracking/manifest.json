@@ -1,0 +1,12 @@
+{
+  "domain": "DHL_Tracking",
+  "name": "DHL Tracking",
+  "codeowners": [
+    "@Mhrooz"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/Mhrooz/DHL_Tracking",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/Mhrooz/DHL_Tracking/issues",
+  "version": "0.1.0"
+}
