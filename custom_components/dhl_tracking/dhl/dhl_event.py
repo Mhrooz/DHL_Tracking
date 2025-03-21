@@ -1,3 +1,11 @@
+"""
+Defines the DhlEvent class, which represents an event in the DHL tracking system.
+
+The DhlEvent class encapsulates details about a specific event, including its timestamp,
+status, detailed status, description, and any additional remarks.
+"""
+
+
 class DhlEvent:
     """
     Represents an event in the DHL tracking system.
