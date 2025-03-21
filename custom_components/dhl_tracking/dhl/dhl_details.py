@@ -71,7 +71,10 @@ class DhlDetails:
         """
         self.product_name = details["product"]["productName"]
         self.weight = (details["weight"]["value"], details["weight"]["unitText"])
-        self.dimensions = DhlDimensions(details["dimensions"])
+        if "dimensions" in details:
+            self.dimensions = DhlDimensions(details["dimensions"])
+        else:
+            self.dimensions = None
 
     def __str__(self) -> str:
         """Return a string representation of the shipment details."""
@@ -89,6 +92,6 @@ class DhlDetails:
         """Return the weight of the shipment."""
         return float(self.weight[0])
 
-    def get_dimensions(self) -> DhlDimensions:
+    def get_dimensions(self) -> DhlDimensions | None:
         """Return the three dimensions of the shipment."""
         return self.dimensions

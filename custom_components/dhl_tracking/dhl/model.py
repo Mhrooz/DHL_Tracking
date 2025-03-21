@@ -53,7 +53,7 @@ class DhlInfo:
         """Return the weight of the shipment."""
         return self.details.get_weight()
 
-    def get_dimensions(self) -> DhlDimensions:
+    def get_dimensions(self) -> DhlDimensions | None:
         """Return the dimensions of the shipment."""
         return self.details.get_dimensions()
 
@@ -61,8 +61,12 @@ class DhlInfo:
         """Return the name of the product."""
         return self.details.get_product_name()
 
-    def get_estimated_time_of_delivery(self) -> str:
+    def get_estimated_time_of_delivery(self) -> str | None:
         """Return the estimated time of delivery."""
+        if self.get_status().get_status_code() == "delivered":
+            return "Delivered"
+        if "estimatedTimeOfDelivery" not in self.info["shipments"][0]:
+            return "N/A"
         return self.info["shipments"][0]["estimatedTimeOfDelivery"]
 
     def get_service_url(self) -> str:
