@@ -64,7 +64,7 @@ class DhlTrackingApiClient:
         test_response = "{}"
         try:
             with open(
-                "/workspaces/DHL_Tracking/custom_components/DHL_Tracking/dhl/test_response.json",
+                "/workspaces/DHL_Tracking/custom_components/dhl_tracking/dhl/test_response.json",
                 encoding="utf-8",
             ) as file:
                 test_response = file.read()
