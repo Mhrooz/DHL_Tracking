@@ -1,31 +1,17 @@
-class DhlDetails:
-    def __init__(self, details):
-        self.product_name = details["product"]["productName"]
-        self.weight = (details["weight"]["value"], details["weight"]["unitText"])
-        self.dimensions = DhlDimensions(details["dimensions"])
+"""
+Module containing classes to represent DHL shipment details and dimensions.
 
-    def __str__(self):
-        return f"""
-            Product Name: {self.product_name},
-            Weight: {self.weight},
-            Dimensions: {self.dimensions}
-        """
-
-    def get_product_name(self):
-        return self.product_name
-
-    def get_weight(self):
-        return self.weight
-
-    def get_dimensions(self):
-        return self.dimensions
+Classes:
+- DhlDimensions: Represents DHL package dimensions (length, width, height, and units).
+- DhlDetails: Represents DHL shipment details (product name, weight, and dimensions).
+"""
 
 
 class DhlDimensions:
-    def __init__(self, dimensions):
-        """
-        :param dimensions: dictionary with keys 'length', 'width', 'height', 'unit'
-        """
+    """Represents DHL package dimensions: length, width, height, and units."""
+
+    def __init__(self, dimensions: dict) -> None:
+        """Provide a dictionary with keys 'length', 'width', 'height', 'unit'."""
         self.length = dimensions["length"]["value"]
         self.length_unit = dimensions["length"]["unitText"]
         self.width = dimensions["width"]["value"]
@@ -33,27 +19,76 @@ class DhlDimensions:
         self.height = dimensions["height"]["value"]
         self.heigth_unit = dimensions["height"]["unitText"]
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """Return a string representation of the dimensions."""
         return f"""
             Length: {self.length},
             Width: {self.width},
             Height: {self.height}
         """
 
-    def get_length(self):
+    def get_length(self) -> str:
+        """Return the length of the package."""
         return self.length
 
-    def get_width(self):
+    def get_width(self) -> str:
+        """Return the width of the package."""
         return self.width
 
-    def get_height(self):
+    def get_height(self) -> str:
+        """Return the height of the package."""
         return self.height
 
-    def get_length_unit(self):
+    def get_length_unit(self) -> str:
+        """Return the unit of the length."""
         return self.length_unit
 
-    def get_width_unit(self):
+    def get_width_unit(self) -> str:
+        """Return the unit of the width."""
         return self.width_unit
 
-    def get_height_unit(self):
+    def get_height_unit(self) -> str:
+        """Return the unit of the height."""
         return self.heigth_unit
+
+
+class DhlDetails:
+    """
+    Analyze json file "details" part.
+
+    Represents DHL shipment details:
+    product name, weight, and dimensions.
+    """
+
+    def __init__(self, details: dict) -> None:
+        """
+        Initialize the DhlDetails object.
+
+        Args:
+            details (dict): A dictionary containing shipment details
+            from the DHL API's response
+
+        """
+        self.product_name = details["product"]["productName"]
+        self.weight = (details["weight"]["value"], details["weight"]["unitText"])
+        self.dimensions = DhlDimensions(details["dimensions"])
+
+    def __str__(self) -> str:
+        """Return a string representation of the shipment details."""
+        return f"""
+            Product Name: {self.product_name},
+            Weight: {self.weight},
+            Dimensions: {self.dimensions}
+        """
+
+    def get_product_name(self) -> str:
+        """Return the name of the product."""
+        return self.product_name
+
+    def get_weight(self) -> float:
+        """Return the weight of the shipment."""
+        return float(self.weight[0])
+
+    def get_dimensions(self) -> DhlDimensions:
+        """Return the three dimensions of the shipment."""
+        return self.dimensions
