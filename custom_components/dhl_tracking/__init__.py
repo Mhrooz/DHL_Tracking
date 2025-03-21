@@ -3,7 +3,7 @@ Custom integration to integrate dhl_tracking with Home Assistant.
 
 For more details about this integration, please refer to
 https://github.com/Mhrooz/dhl_tracking
-"""  # noqa: N999
+"""
 
 from __future__ import annotations
 
@@ -13,7 +13,6 @@ from typing import TYPE_CHECKING
 from homeassistant.const import CONF_API_TOKEN, Platform
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.loader import async_get_loaded_integration
-
 
 from .api import DhlTrackingApiClient
 from .const import CONF_TRACKING_NUMBER, DOMAIN, LOGGER
