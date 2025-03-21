@@ -1,4 +1,4 @@
-"""Switch platform for integration_blueprint."""
+"""Switch platform for dhl_tracking."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 ENTITY_DESCRIPTIONS = (
     SwitchEntityDescription(
-        key="integration_blueprint",
+        key="dhl_tracking",
         name="Integration Switch",
         icon="mdi:format-quote-close",
     ),
@@ -30,17 +30,18 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the switch platform."""
-    async_add_entities(
-        DhlTrackingSwitch(
-            coordinator=entry.runtime_data.coordinator,
-            entity_description=entity_description,
-        )
-        for entity_description in ENTITY_DESCRIPTIONS
-    )
+
+    # async_add_entities(
+    #     IntegrationBlueprintSwitch(
+    #         coordinator=entry.runtime_data.coordinator,
+    #         entity_description=entity_description,
+    #     )
+    #     for entity_description in ENTITY_DESCRIPTIONS
+    # )
 
 
-class DhlTrackingSwitch(DhlTrackingEntity, SwitchEntity):
-    """integration_blueprint switch class."""
+class IntegrationBlueprintSwitch(DhlTrackingEntity, SwitchEntity):
+    """dhl_tracking switch class."""
 
     def __init__(
         self,

@@ -1,4 +1,4 @@
-"""Sensor platform for integration_blueprint."""
+"""Sensor platform for dhl_tracking."""
 
 from __future__ import annotations
 
@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
 
 from .entity import DhlTrackingEntity
+
+from .dhl.model import DhlInfo
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -17,9 +19,17 @@ if TYPE_CHECKING:
 
 ENTITY_DESCRIPTIONS = (
     SensorEntityDescription(
-        key="integration_blueprint",
-        name="Integration Sensor",
+        key="dhl_tracking",
+        name="Packet Name",
         icon="mdi:format-quote-close",
+    ),
+)
+
+DHL_ESTIMATE_TIME_ENTITY_DESCRIPTIONS = (
+    SensorEntityDescription(
+        key="dhl_estimate_time",
+        name="Packet ETA",
+        icon="mdi:timer",
     ),
 )
 
@@ -36,6 +46,13 @@ async def async_setup_entry(
             entity_description=entity_description,
         )
         for entity_description in ENTITY_DESCRIPTIONS
+    )
+    async_add_entities(
+        DhlEstimateTimeSensor(
+            coordinator=entry.runtime_data.coordinator,
+            entity_description=entity_description,
+        )
+        for entity_description in DHL_ESTIMATE_TIME_ENTITY_DESCRIPTIONS
     )
 
 
@@ -54,4 +71,26 @@ class DhlTrackingSensor(DhlTrackingEntity, SensorEntity):
     @property
     def native_value(self) -> str | None:
         """Return the native value of the sensor."""
-        return self.coordinator.data.get("body")
+        return self.coordinator.data.get_product_name()
+
+
+class DhlEstimateTimeSensor(DhlTrackingEntity, SensorEntity):
+    """dhl_tracking Sensor class."""
+
+    def __init__(
+        self,
+        coordinator: BlueprintDataUpdateCoordinator,
+        entity_description: SensorEntityDescription,
+    ) -> None:
+        """Initialize the sensor class."""
+        super().__init__(coordinator)
+        self.entity_description = entity_description
+        # TODO: Set unique_id to the tracking number
+        self.unique_id = "914JDWXMAI0Z5GANQM"
+
+    @property
+    def native_value(self) -> str | None:
+        """Return the native value of the sensor."""
+        # return self.coordinator.data.get("title")
+        dhl_info = self.coordinator.data
+        return dhl_info.get_estimated_time_of_delivery()

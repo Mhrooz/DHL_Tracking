@@ -1,5 +1,5 @@
 {
-  "domain": "DHL_Tracking",
+  "domain": "dhl_tracking",
   "name": "DHL Tracking",
   "codeowners": [
     "@Mhrooz"
