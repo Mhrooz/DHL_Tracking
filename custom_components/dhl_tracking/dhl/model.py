@@ -1,8 +1,9 @@
-import json
-import requests
+"""Provides the DhlInfo class for interacting with the DHL shipment tracking API."""
 
+from .dhl_details import DhlDetails, DhlDimensions  # noqa: I001
 from .dhl_event import DhlEvent
-from .dhl_details import DhlDetails
+
+import requests
 
 
 URL = "https://api-eu.dhl.com/track/shipments"
@@ -10,98 +11,73 @@ API_KEY = "8CHuz4BNB6IBRyD75wpvgJ8yx6KfiomA"
 
 TEST_TRACKING_NUMBER = "00340434498944707831"
 
-# curl  -X GET 'https://api-eu.dhl.com/track/shipments?trackingNumber=00340434781076423558'
-#       -H 'DHL-API-Key:8CHuz4BNB6IBRyD75wpvgJ8yx6KfiomA'
-
-TEST_RESPONSE = """{}"""
-try:
-    with open("test_response.json", "r", encoding="utf-8") as file:
-        TEST_RESPONSE = file.read()
-except FileNotFoundError:
-    print("File not found")
-
-
-class DhlRequest:
-    def __init__(self, tracking_numbers):
-        self.tracking_numbers = tracking_numbers
-        # self.json_info = self.get_tracking_info(tracking_numbers)
-        TESTRESPONSEJSON = json.loads(TEST_RESPONSE)
-        self.json_info = TESTRESPONSEJSON
-
-        self.info = DhlInfo(self.json_info)
-
-    def get_tracking_info(self, tracking_number):
-        headers = {"DHL-API-Key": API_KEY}
-        params = {"trackingNumber": tracking_number}
-        response = requests.get(URL, headers=headers, params=params)
-        return response.json()
-
 
 class DhlInfo:
-    """
-    Class to get information about a DHL shipment
-    """
+    """Class to get information about a DHL shipment."""
 
-    def __init__(self, json_info):
+    def __init__(self, json_info: dict) -> None:
+        """
+        Initialize the DhlInfo object with shipment information.
+
+        Args:
+            json_info (dict): The JSON information about the shipment.
+
+        """
         self.info = json_info
         self.status = self.get_status()
         self.details = DhlDetails(self.info["shipments"][0]["details"])
         self.events = self.get_all_events()
         self.estimated_time_of_delivery = self.get_estimated_time_of_delivery()
 
-    def get_tracking_info(self, tracking_number):
+    def get_tracking_info(self, tracking_number: str) -> dict:
+        """
+        Fetch tracking information for a given tracking number.
+
+        Args:
+            tracking_number (str): The tracking number of the shipment.
+
+        Returns:
+            dict: The tracking information as a dictionary.
+
+        """
         headers = {"DHL-API-Key": API_KEY}
         params = {"trackingNumber": tracking_number}
-        response = requests.get(URL, headers=headers, params=params)
+        response = requests.get(URL, headers=headers, params=params, timeout=10)
         return response.json()
 
-    def get_status(self):
-        """
-        Returns the current status of the shipment
-        """
+    def get_status(self) -> DhlEvent:
+        """Return the current status of the shipment."""
         return DhlEvent(self.info["shipments"][0]["status"])
 
-    def get_weight(self):
-        """
-        Returns the weight of the shipment
-        """
+    def get_weight(self) -> float:
+        """Return the weight of the shipment."""
         return self.details.get_weight()
 
-    def get_dimensions(self):
-        """
-        Returns the dimensions of the shipment
-        """
+    def get_dimensions(self) -> DhlDimensions:
+        """Return the dimensions of the shipment."""
         return self.details.get_dimensions()
 
-    def get_product_name(self):
-        """
-        Returns the name of the product
-        """
+    def get_product_name(self) -> str:
+        """Return the name of the product."""
         return self.details.get_product_name()
 
-    def get_estimated_time_of_delivery(self):
-        """
-        Returns the estimated time of estimated
-        """
+    def get_estimated_time_of_delivery(self) -> str:
+        """Return the estimated time of delivery."""
         return self.info["shipments"][0]["estimatedTimeOfDelivery"]
 
-    def get_service_url(self):
+    def get_service_url(self) -> str:
+        """Return the service URL."""
         return self.info["shipments"][0]["serviceUrl"]
 
-    def get_all_info(self):
+    def get_all_info(self) -> dict:
+        """Return all the information about the shipment."""
         return self.info
 
-    def get_all_events(self):
+    def get_all_events(self) -> list[DhlEvent]:
+        """Return all the events of the shipment."""
         events_json = self.info["shipments"][0]["events"]
-        events_list = []
-        for event in events_json:
-            events_list.append(DhlEvent(event))
-        return events_list
+        return [DhlEvent(event) for event in events_json]
 
 
 if __name__ == "__main__":
-    dhl_info = DhlInfo(TEST_TRACKING_NUMBER)
-    print("status: ", dhl_info.get_status())
-    print("All events:")
-    for event in dhl_info.get_all_events():
-        print(event)
+    pass
