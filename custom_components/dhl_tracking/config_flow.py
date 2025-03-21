@@ -15,7 +15,7 @@ from .api import (
     DhlTrackingApiClientCommunicationError,
     DhlTrackingApiClientError,
 )
-from .const import CONF_TRACKING_NUMBER, DOMAIN, LOGGER
+from .const import CONF_PACKET_NAME, CONF_TRACKING_NUMBER, DOMAIN, LOGGER
 
 
 class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -34,6 +34,7 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 await self._test_credentials(
                     _api_token=user_input[CONF_API_TOKEN],
                     _tracking_number=user_input[CONF_TRACKING_NUMBER],
+                    _packet_name=user_input[CONF_PACKET_NAME],
                 )
             except DhlTrackingApiClientAuthenticationError as exception:
                 LOGGER.warning(exception)
@@ -49,11 +50,11 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     ## Do NOT use this in production code
                     ## The unique_id should never be something that can change
                     ## https://developers.home-assistant.io/docs/config_entries_config_flow_handler#unique-ids
-                    unique_id=slugify(user_input[CONF_API_TOKEN])
+                    unique_id=slugify(user_input[CONF_TRACKING_NUMBER])
                 )
                 self._abort_if_unique_id_configured()
                 return self.async_create_entry(
-                    title=user_input[CONF_API_TOKEN],
+                    title=user_input[CONF_PACKET_NAME],
                     data=user_input,
                 )
 
@@ -79,16 +80,27 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                             type=selector.TextSelectorType.TEXT,
                         ),
                     ),
+                    vol.Required(
+                        CONF_PACKET_NAME,
+                        default=(user_input or {}).get(CONF_PACKET_NAME, vol.UNDEFINED),
+                    ): selector.TextSelector(
+                        selector.TextSelectorConfig(
+                            type=selector.TextSelectorType.TEXT,
+                        ),
+                    ),
                 },
             ),
             errors=_errors,
         )
 
-    async def _test_credentials(self, _api_token: str, _tracking_number: str) -> None:
+    async def _test_credentials(
+        self, _api_token: str, _tracking_number: str, _packet_name: str
+    ) -> None:
         """Validate credentials."""
         client = DhlTrackingApiClient(
             _api_token=_api_token,
             _tracking_number=_tracking_number,
+            _packet_name=_packet_name,
             session=async_create_clientsession(self.hass),
         )
         await client.async_get_data()

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import socket
 from typing import Any
 
@@ -38,7 +37,6 @@ def _verify_response_or_raise(response: aiohttp.ClientResponse) -> None:
     response.raise_for_status()
 
 
-# class DhlTrackingApiClient
 class DhlTrackingApiClient:
     """Sample API Client."""
 
@@ -46,11 +44,13 @@ class DhlTrackingApiClient:
         self,
         _api_token: str,
         _tracking_number: str,
+        _packet_name: str,
         session: aiohttp.ClientSession,
     ) -> None:
         """Sample API Client."""
         self._api_token = _api_token
         self._tracking_number = _tracking_number
+        self._packet_name = _packet_name
         self._session = session
 
     async def async_get_data(self) -> Any:
@@ -66,7 +66,7 @@ class DhlTrackingApiClient:
             url=f"https://api-eu.dhl.com/track/shipments?trackingNumber={self._tracking_number}",
             headers={"DHL-API-Key": self._api_token},
         )
-        return DhlInfo(json_info=json.loads(json_info))
+        return DhlInfo(json_info=json_info)
 
     async def async_set_title(self, value: str) -> Any:
         """Get data from the API."""
