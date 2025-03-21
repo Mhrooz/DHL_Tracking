@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import json
-import logging
 import socket
 from typing import Any
 
 import aiohttp
 import async_timeout
+
 from .dhl.model import DhlInfo
 
 
@@ -61,16 +61,12 @@ class DhlTrackingApiClient:
             url="https://jsonplaceholder.typicode.com/posts/1",
         )
         """
-        test_response = "{}"
-        try:
-            with open(
-                "/workspaces/DHL_Tracking/custom_components/dhl_tracking/dhl/test_response.json",
-                encoding="utf-8",
-            ) as file:
-                test_response = file.read()
-        except FileNotFoundError:
-            logging.getLogger(__name__).warning("File not found")
-        return DhlInfo(json_info=json.loads(test_response))
+        json_info = await self._api_wrapper(
+            method="get",
+            url=f"https://api-eu.dhl.com/track/shipments?trackingNumber={self._tracking_number}",
+            headers={"DHL-API-Key": self._api_token},
+        )
+        return DhlInfo(json_info=json.loads(json_info))
 
     async def async_set_title(self, value: str) -> Any:
         """Get data from the API."""
