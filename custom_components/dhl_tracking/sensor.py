@@ -1,6 +1,6 @@
 """Sensor platform for dhl_tracking."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: I001
 
 from typing import TYPE_CHECKING
 
@@ -8,7 +8,6 @@ from homeassistant.components.sensor import SensorEntity, SensorEntityDescriptio
 
 from .entity import DhlTrackingEntity
 
-from .dhl.model import DhlInfo
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -85,12 +84,10 @@ class DhlEstimateTimeSensor(DhlTrackingEntity, SensorEntity):
         """Initialize the sensor class."""
         super().__init__(coordinator)
         self.entity_description = entity_description
-        # TODO: Set unique_id to the tracking number
         self.unique_id = "914JDWXMAI0Z5GANQM"
 
     @property
     def native_value(self) -> str | None:
         """Return the native value of the sensor."""
-        # return self.coordinator.data.get("title")
         dhl_info = self.coordinator.data
         return dhl_info.get_estimated_time_of_delivery()
