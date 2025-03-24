@@ -3,8 +3,6 @@
 from .dhl_details import DhlDetails, DhlDimensions  # noqa: I001
 from .dhl_event import DhlEvent
 
-import requests
-
 
 class DhlInfo:
     """Class to get information about a DHL shipment."""
@@ -18,7 +16,6 @@ class DhlInfo:
 
         """
         self.info = json_info
-        print(self.info)
         self.status = self.get_status()
         self.details = DhlDetails(self.info["shipments"][0]["details"])
         self.events = self.get_all_events()
