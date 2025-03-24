@@ -26,9 +26,9 @@ class DhlEvent:
         self.timestamp = event["timestamp"]
         self.status_code = event["statusCode"]
         self.status = event["status"]
-        self.status_detailed = event["statusDetailed"]
+        self.status_detailed = event.get("statusDetailed", "N/A")
         self.description = event["description"]
-        self.remark = event["remark"]
+        self.remark = event.get("remark", "N/A")
 
     def get_timestamp(self) -> str:
         """Return the timestamp of the event."""

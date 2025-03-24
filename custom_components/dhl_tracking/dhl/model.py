@@ -6,12 +6,6 @@ from .dhl_event import DhlEvent
 import requests
 
 
-URL = "https://api-eu.dhl.com/track/shipments"
-API_KEY = "8CHuz4BNB6IBRyD75wpvgJ8yx6KfiomA"
-
-TEST_TRACKING_NUMBER = "00340434498944707831"
-
-
 class DhlInfo:
     """Class to get information about a DHL shipment."""
 
@@ -24,26 +18,11 @@ class DhlInfo:
 
         """
         self.info = json_info
+        print(self.info)
         self.status = self.get_status()
         self.details = DhlDetails(self.info["shipments"][0]["details"])
         self.events = self.get_all_events()
         self.estimated_time_of_delivery = self.get_estimated_time_of_delivery()
-
-    def get_tracking_info(self, tracking_number: str) -> dict:
-        """
-        Fetch tracking information for a given tracking number.
-
-        Args:
-            tracking_number (str): The tracking number of the shipment.
-
-        Returns:
-            dict: The tracking information as a dictionary.
-
-        """
-        headers = {"DHL-API-Key": API_KEY}
-        params = {"trackingNumber": tracking_number}
-        response = requests.get(URL, headers=headers, params=params, timeout=10)
-        return response.json()
 
     def get_status(self) -> DhlEvent:
         """Return the current status of the shipment."""

@@ -70,7 +70,10 @@ class DhlDetails:
 
         """
         self.product_name = details["product"]["productName"]
-        self.weight = (details["weight"]["value"], details["weight"]["unitText"])
+        if "weight" in details:
+            self.weight = (details["weight"]["value"], details["weight"]["unitText"])
+        else:
+            self.weight = -1.00
         if "dimensions" in details:
             self.dimensions = DhlDimensions(details["dimensions"])
         else:
