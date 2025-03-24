@@ -32,6 +32,14 @@ DHL_ESTIMATE_TIME_ENTITY_DESCRIPTIONS = (
     ),
 )
 
+DHL_CURRENT_STATUS_ENTITY_DESCRIPTIONS = (
+    SensorEntityDescription(
+        key="dhl_current_status",
+        name="Packet Status",
+        icon="mdi:package-variant-closed",
+    ),
+)
+
 
 async def async_setup_entry(
     hass: HomeAssistant,  # noqa: ARG001 Unused function argument: `hass`
@@ -52,6 +60,13 @@ async def async_setup_entry(
             entity_description=entity_description,
         )
         for entity_description in DHL_ESTIMATE_TIME_ENTITY_DESCRIPTIONS
+    )
+    async_add_entities(
+        DhlCurrentStatusSensor(
+            coordinator=entry.runtime_data.coordinator,
+            entity_description=entity_description,
+        )
+        for entity_description in DHL_CURRENT_STATUS_ENTITY_DESCRIPTIONS
     )
 
 
@@ -84,10 +99,30 @@ class DhlEstimateTimeSensor(DhlTrackingEntity, SensorEntity):
         """Initialize the sensor class."""
         super().__init__(coordinator)
         self.entity_description = entity_description
-        self.unique_id = "914JDWXMAI0Z5GANQM"
+        self.unique_id = coordinator.config_entry.entry_id + "_dhl_estimate_time"
 
     @property
     def native_value(self) -> str | None:
         """Return the native value of the sensor."""
         dhl_info = self.coordinator.data
         return dhl_info.get_estimated_time_of_delivery()
+
+
+class DhlCurrentStatusSensor(DhlTrackingEntity, SensorEntity):
+    """dhl_tracking Sensor class."""
+
+    def __init__(
+        self,
+        coordinator: BlueprintDataUpdateCoordinator,
+        entity_description: SensorEntityDescription,
+    ) -> None:
+        """Initialize the sensor class."""
+        super().__init__(coordinator)
+        self.entity_description = entity_description
+        self.unique_id = coordinator.config_entry.entry_id + "current_status"
+
+    @property
+    def native_value(self) -> str | None:
+        """Return the native value of the sensor."""
+        dhl_info = self.coordinator.data
+        return dhl_info.get_status().get_status_code()
